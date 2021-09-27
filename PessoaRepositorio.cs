@@ -6,9 +6,16 @@ namespace console_treinamento
 {
     public class PessoaRepositorio
     {
-        public static List<IPessoa> Todos()
+        public PessoaRepositorio(Type type)
         {
-            var clientes = new List<IPessoa>();
+            this.type = type;
+        }
+
+        private Type type;
+
+        public List<IPessoa> Todos()
+        {
+            var pessoas = new List<IPessoa>();
 
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
@@ -19,19 +26,19 @@ namespace console_treinamento
                     var dr = command.ExecuteReader();
                     while (dr.Read())
                     {
-                        var cli = new Cliente();
-                        cli.Id = Convert.ToInt32(dr["id"]);
-                        cli.Nome = dr["nome"].ToString();
-                        cli.Telefone = dr["telefone"].ToString();
+                        var pes = (IPessoa)Activator.CreateInstance(type);
+                        pes.Id = Convert.ToInt32(dr["id"]);
+                        pes.Nome = dr["nome"].ToString();
+                        pes.Telefone = dr["telefone"].ToString();
 
-                        clientes.Add(cli);
+                        pessoas.Add(pes);
                     }
                 }
 
                 connection.Close();
             }
 
-            return clientes;
+            return pessoas;
         }
 
         public void Salvar(IPessoa pessoa)

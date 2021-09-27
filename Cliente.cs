@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using MySql.Data.MySqlClient;
 
 namespace console_treinamento
 {
-    public class Cliente : IFisica
+    public class Cliente : IPessoa
     {
         public int Id {get;set;}
         public string Nome {get;set;}
