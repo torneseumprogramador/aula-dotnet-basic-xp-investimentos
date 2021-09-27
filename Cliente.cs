@@ -4,6 +4,11 @@ namespace console_treinamento
 {
     public class Cliente : APessoa, IFisica
     {
+        public Cliente()
+        {
+            SetDocumento(this.CPF);
+        }
+
        public string CPF
        {
             get
@@ -16,6 +21,11 @@ namespace console_treinamento
                 this.Documento = value;
             }
        }
+
+        public override void SetDocumento(string cpf)
+        {
+            this.Documento = cpf;
+        }
 
         private bool validaCPF(string vrCPF)
         {
