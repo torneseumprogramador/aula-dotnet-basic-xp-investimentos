@@ -2,8 +2,10 @@
 
 namespace console_treinamento
 {
-    public interface IFisica
+    public interface IPessoa
     {
-        string Nome {get;set;}
+        int Id {get;set;}
+        string Nome { get;set;}
+        string Telefone { get;set;}
     }
 }
