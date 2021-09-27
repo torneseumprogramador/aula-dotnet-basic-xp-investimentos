@@ -20,9 +20,11 @@ namespace console_treinamento
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                var sql = $"select * from pessoas limit 1000";
+                var sql = $"select * from pessoas where tipo = @tipo limit 1000";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
+                    command.Parameters.AddWithValue("@tipo", type.Name);
+
                     var dr = command.ExecuteReader();
                     while (dr.Read())
                     {

@@ -6,3 +6,6 @@ CREATE TABLE pessoas (
     telefone varchar(20),
     PRIMARY KEY ( id )
 );
+
+
+alter table pessoas add column tipo varchar (100);
