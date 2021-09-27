@@ -9,3 +9,5 @@ CREATE TABLE pessoas (
 
 
 alter table pessoas add column tipo varchar (100);
+
+alter table pessoas add column documento varchar (40);

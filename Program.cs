@@ -12,6 +12,23 @@ namespace console_treinamento
             var repoFornecedor = new PessoaRepositorio(typeof(Fornecedor));
             
 
+
+            repoCliente.Salvar(new Cliente()
+            {
+                Nome = "Daniela 2",
+                Telefone = "(11)99999-9999",
+                CPF = "404.324.670-68"
+            });
+
+            repoCliente.Salvar(new Fornecedor()
+            {
+                Nome = "Xp investimentos 2",
+                Telefone = "(11)99999-9999",
+                CNPJ = "23.332.060/0001-07"
+            });
+
+
+
             Console.WriteLine("------------[Clientes]-------------");
             foreach (var cliente in repoCliente.Todos())
             {
@@ -31,22 +48,6 @@ namespace console_treinamento
                 Console.WriteLine($"Telefone {cliente.Telefone}");
                 Console.WriteLine("----------------------------");
             }
-
-
-
-
-            /*repoCliente.Salvar(new Cliente()
-            {
-                Nome = "Lana",
-                Telefone = "(11)99999-9999"
-            });
-
-            repoCliente.Salvar(new Cliente()
-            {
-                Nome = "Denilson",
-                Telefone = "(11)99999-9999"
-            });*/
-
 
             //Cliente.DeletePorId(5);
 

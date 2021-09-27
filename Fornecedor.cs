@@ -2,10 +2,18 @@
 
 namespace console_treinamento
 {
-    public class Fornecedor: IPessoa
+    public class Fornecedor: APessoa
     {
-        public int Id {get;set;}
-        public string Nome {get;set;}
-        public string Telefone {get;set;}
+        public string CNPJ
+        {
+            get
+            {
+                return this.Documento;
+            }
+            set
+            {
+                this.Documento = value;
+            }
+        }
     }
 }

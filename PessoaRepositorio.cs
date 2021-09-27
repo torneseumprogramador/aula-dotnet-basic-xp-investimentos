@@ -32,6 +32,7 @@ namespace console_treinamento
                         pes.Id = Convert.ToInt32(dr["id"]);
                         pes.Nome = dr["nome"].ToString();
                         pes.Telefone = dr["telefone"].ToString();
+                        pes.Documento = dr["documento"].ToString();
 
                         pessoas.Add(pes);
                     }
@@ -50,23 +51,28 @@ namespace console_treinamento
                 connection.Open();
                 if (pessoa.Id == 0)
                 {
-                    var sql = $"insert into pessoas(nome, telefone)values(@nome, @telefone)";
+                    var sql = $"insert into pessoas(nome, telefone, tipo, documento)values(@nome, @telefone, @tipo, @documento)";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@nome", pessoa.Nome);
                         command.Parameters.AddWithValue("@telefone", pessoa.Telefone);
+                        command.Parameters.AddWithValue("@tipo", pessoa.GetType().Name);
+                        command.Parameters.AddWithValue("@documento", pessoa.Documento);
+
 
                         pessoa.Id = Convert.ToInt32(command.ExecuteScalar());
                     }
                 }
                 else
                 {
-                    var sql = $"update pessoas set nome = @nome, telefone = @telefone where id = @id";
+                    var sql = $"update pessoas set nome = @nome, telefone = @telefone, tipo = @tipo, documento = @documento where id = @id";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@id", pessoa.Id);
                         command.Parameters.AddWithValue("@nome", pessoa.Nome);
                         command.Parameters.AddWithValue("@telefone", pessoa.Telefone);
+                        command.Parameters.AddWithValue("@tipo", pessoa.GetType().Name);
+                        command.Parameters.AddWithValue("@documento", pessoa.Documento);
 
                         pessoa.Id = Convert.ToInt32(command.ExecuteScalar());
                     }
