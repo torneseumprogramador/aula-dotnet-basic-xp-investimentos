@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace console_treinamento
 {
@@ -14,11 +15,11 @@ namespace console_treinamento
         {
             var clientes = new List<Cliente>();
 
-            using (SqlConnection connection = new SqlConnection(Program.SqlCNN))
+            using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                var sql = $"select top 1000 * from pessoas";
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                var sql = $"select * from pessoas limit 1000";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     var dr = command.ExecuteReader();
                     while (dr.Read())
@@ -40,13 +41,13 @@ namespace console_treinamento
 
         public void Salvar()
         {
-            using (SqlConnection connection = new SqlConnection(Program.SqlCNN))
+            using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
                 if (this.Id == 0)
                 {
                     var sql = $"insert into pessoas(nome, telefone)values(@nome, @telefone)";
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@nome", this.Nome);
                         command.Parameters.AddWithValue("@telefone", this.Telefone);
@@ -57,7 +58,7 @@ namespace console_treinamento
                 else
                 {
                     var sql = $"update pessoas set nome = @nome, telefone = @telefone where id = @id";
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@id", this.Id);
                         command.Parameters.AddWithValue("@nome", this.Nome);
@@ -78,11 +79,11 @@ namespace console_treinamento
 
         public void Delete()
         {
-            using (SqlConnection connection = new SqlConnection(Program.SqlCNN))
+            using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
                 var sql = $"delete from pessoas where id = @id";
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@id", this.Id);
 

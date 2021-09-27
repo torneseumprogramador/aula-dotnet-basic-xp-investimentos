@@ -1,5 +1,6 @@
 CREATE TABLE pessoas (
-    id int IDENTITY(1,1) PRIMARY KEY,
+    id int NOT NULL AUTO_INCREMENT,
     nome varchar(100) NOT NULL,
-    telefone varchar(20)
+    telefone varchar(20),
+    PRIMARY KEY ( id )
 );
