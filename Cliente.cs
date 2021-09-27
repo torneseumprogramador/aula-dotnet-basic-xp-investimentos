@@ -4,6 +4,8 @@ namespace console_treinamento
 {
     public class Cliente : APessoa, IFisica
     {
+        public string EnderecoDoCliente { get; set; }
+
         public Cliente()
         {
             SetDocumento(this.CPF);

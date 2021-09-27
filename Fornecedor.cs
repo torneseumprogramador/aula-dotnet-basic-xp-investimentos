@@ -18,7 +18,7 @@ namespace console_treinamento
 
         public override void SetDocumento(string cnpj)
         {
-            this.Documento = cnpj
+            this.Documento = cnpj;
         }
     }
 }

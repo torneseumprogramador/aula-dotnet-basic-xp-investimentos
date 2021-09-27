@@ -34,6 +34,9 @@ namespace console_treinamento
                         pes.Telefone = dr["telefone"].ToString();
                         pes.Documento = dr["documento"].ToString();
 
+                        // Reflaction para amanhã
+                        //EnderecoDoCliente
+
                         pessoas.Add(pes);
                     }
                 }

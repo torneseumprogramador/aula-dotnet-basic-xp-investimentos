@@ -8,5 +8,7 @@ namespace console_treinamento
         public string Nome { get; set; }
         public string Telefone { get; set; }
         public string Documento { get; set; }
+
+        public abstract void SetDocumento(string doc);
     }
 }
