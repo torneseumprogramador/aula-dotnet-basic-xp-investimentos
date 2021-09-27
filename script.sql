@@ -1,3 +1,5 @@
+create table aula_xp;
+
 CREATE TABLE pessoas (
     id int NOT NULL AUTO_INCREMENT,
     nome varchar(100) NOT NULL,
