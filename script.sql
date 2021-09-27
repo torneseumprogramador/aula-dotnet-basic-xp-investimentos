@@ -1,4 +1,4 @@
-create table aula_xp;
+create database aula_xp;
 
 CREATE TABLE pessoas (
     id int NOT NULL AUTO_INCREMENT,
