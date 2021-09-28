@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace console_treinamento
 {
@@ -8,28 +9,29 @@ namespace console_treinamento
 
         static void Main(string[] args)
         {
-            var repoCliente = new PessoaRepositorio(typeof(Cliente));
-            var repoFornecedor = new PessoaRepositorio(typeof(Fornecedor));
+
+            var clientes = PessoaRepositorio.Todos<Cliente>();
+            var fornecedores = PessoaRepositorio.Todos<Fornecedor>();
 
 
-            //repoCliente.Salvar(new Cliente()
-            //{
-            //    Nome = "Daniela 2",
-            //    Telefone = "(11)99999-9999",
-            //    CPF = "404.324.670-68"
-            //});
+            PessoaRepositorio.Salvar(new Cliente()
+            {
+                Nome = "Daniela 2",
+                Telefone = "(11)99999-9999",
+                CPF = "404.324.670-68"
+            });
 
-            //repoCliente.Salvar(new Fornecedor()
-            //{
-            //    Nome = "Xp investimentos 2",
-            //    Telefone = "(11)99999-9999",
-            //    CNPJ = "23.332.060/0001-07"
-            //});
+            PessoaRepositorio.Salvar(new Fornecedor()
+            {
+                Nome = "Xp investimentos 2",
+                Telefone = "(11)99999-9999",
+                CNPJ = "23.332.060/0001-07"
+            });
 
 
 
             Console.WriteLine("------------[Clientes]-------------");
-            foreach (var cliente in repoCliente.Todos())
+            foreach (var cliente in clientes)
             {
                 Console.WriteLine($"Id {cliente.Id}");
                 Console.WriteLine($"Nome {cliente.Nome}");
@@ -40,11 +42,11 @@ namespace console_treinamento
             Console.WriteLine("\n");
 
             Console.WriteLine("------------[Fornecedores]----------------");
-            foreach (var cliente in repoFornecedor.Todos())
+            foreach (var fornecedor in fornecedores)
             {
-                Console.WriteLine($"Id {cliente.Id}");
-                Console.WriteLine($"Nome {cliente.Nome}");
-                Console.WriteLine($"Telefone {cliente.Telefone}");
+                Console.WriteLine($"Id {fornecedor.Id}");
+                Console.WriteLine($"Nome {fornecedor.Nome}");
+                Console.WriteLine($"Telefone {fornecedor.Telefone}");
                 Console.WriteLine("----------------------------");
             }
 

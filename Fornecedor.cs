@@ -2,24 +2,9 @@
 
 namespace console_treinamento
 {
+    [Tabela("fornecedores")]
     public class Fornecedor: APessoa
     {
-        [NaoMapeada]
-        public string CNPJ
-        {
-            get
-            {
-                return this.Documento;
-            }
-            set
-            {
-                this.Documento = value;
-            }
-        }
-
-        public override void SetDocumento(string cnpj)
-        {
-            this.Documento = cnpj;
-        }
+        public string CNPJ { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using MySql.Data.MySqlClient;
 
@@ -7,33 +8,21 @@ namespace console_treinamento
 {
     public class PessoaRepositorio
     {
-        public PessoaRepositorio(Type type)
+        public static List<T> Todos<T>()
         {
-            this.type = type;
-        }
-
-        private Type type;
-
-        public List<IPessoa> Todos()
-        {
-            var pessoas = new List<IPessoa>();
+            var pessoas = new List<T>();
 
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                var nomeTabela = $"{this.type.Name.ToLower()}s";
-                var tableAttr = this.type.GetCustomAttribute<TabelaAttribute>();
-                if (tableAttr != null) nomeTabela = tableAttr.Nome;
-
-                var sql = $"select * from {nomeTabela} limit 1000";
+                var type = typeof(T);
+                var sql = $"select * from {getTableName(type)} limit 1000";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@tipo", type.Name);
-
                     var dr = command.ExecuteReader();
                     while (dr.Read())
                     {
-                        var pes = (IPessoa)Activator.CreateInstance(type);
+                        var pes = (T)Activator.CreateInstance(type);
                         
                         foreach (var pi in pes.GetType().GetProperties())
                         {
@@ -59,37 +48,69 @@ namespace console_treinamento
             return pessoas;
         }
 
-        public void Salvar(IPessoa pessoa)
+        public static void Salvar<T>(T type)
         {
+            IType iType = (IType)type;
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                if (pessoa.Id == 0)
+                if (iType.Id == 0)
                 {
-                    var sql = $"insert into pessoas(nome, telefone, tipo, documento)values(@nome, @telefone, @tipo, @documento)";
+                    var listColunas = new List<string>();
+                    var parametters = new List<MySqlParameter>();
+                    foreach (var pi in iType.GetType().GetProperties())
+                    {
+                        var notPersistedField = pi.GetCustomAttribute<NaoMapeadaAttribute>();
+                        if (notPersistedField != null) continue;
+
+                        var nomeColuna = pi.Name;
+
+                        var nomeColunaAtributo = pi.GetCustomAttribute<NomeDaColunaNoBancoAttribute>();
+                        if (nomeColunaAtributo != null) nomeColuna = nomeColunaAtributo.Nome;
+
+                        listColunas.Add(nomeColuna);
+                        parametters.Add(new MySqlParameter("@" + nomeColuna, pi.GetValue(iType)));
+                    }
+
+                    var colunasBase = string.Join(",", listColunas.ToArray());
+                    var paramBase = string.Join(",", listColunas.Select( c => $"@{c}").ToList().ToArray());
+                    var sql = $"insert into {getTableName(iType.GetType())}({colunasBase})values({paramBase})";
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@nome", pessoa.Nome);
-                        command.Parameters.AddWithValue("@telefone", pessoa.Telefone);
-                        command.Parameters.AddWithValue("@tipo", pessoa.GetType().Name);
-                        command.Parameters.AddWithValue("@documento", pessoa.Documento);
-
-
-                        pessoa.Id = Convert.ToInt32(command.ExecuteScalar());
+                        command.Parameters.AddRange(parametters.ToArray());
+                        iType.Id = Convert.ToInt32(command.ExecuteScalar());
                     }
                 }
                 else
                 {
-                    var sql = $"update pessoas set nome = @nome, telefone = @telefone, tipo = @tipo, documento = @documento where id = @id";
+                    var listColunas = new List<string>();
+                    var parametters = new List<MySqlParameter>();
+                    foreach (var pi in iType.GetType().GetProperties())
+                    {
+                        var notPersistedField = pi.GetCustomAttribute<NaoMapeadaAttribute>();
+                        if (notPersistedField != null) continue;
+                        if (pi.Name == "Id") continue;
+
+                        var nomeColuna = pi.Name;
+
+                        var nomeColunaAtributo = pi.GetCustomAttribute<NomeDaColunaNoBancoAttribute>();
+                        if (nomeColunaAtributo != null) nomeColuna = nomeColunaAtributo.Nome;
+
+                        listColunas.Add($"{nomeColuna} = @{nomeColuna}");
+                        parametters.Add(new MySqlParameter("@" + nomeColuna, pi.GetValue(iType)));
+                    }
+                    parametters.Add(new MySqlParameter("@id", iType.Id));
+
+                    var colunasBase = string.Join(",", listColunas.ToArray());
+
+                    var sql = $"update pessoas set {colunasBase} where id = @id";
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@id", pessoa.Id);
-                        command.Parameters.AddWithValue("@nome", pessoa.Nome);
-                        command.Parameters.AddWithValue("@telefone", pessoa.Telefone);
-                        command.Parameters.AddWithValue("@tipo", pessoa.GetType().Name);
-                        command.Parameters.AddWithValue("@documento", pessoa.Documento);
+                        
 
-                        pessoa.Id = Convert.ToInt32(command.ExecuteScalar());
+                        command.ExecuteNonQuery();
                     }
                 }
 
@@ -97,15 +118,25 @@ namespace console_treinamento
             }
         }
 
-        public void Delete(IPessoa pessoa)
+        private static string getTableName(Type type)
         {
+            var nomeTabela = $"{type.Name.ToLower()}s";
+            var tableAttr = type.GetCustomAttribute<TabelaAttribute>();
+            if (tableAttr != null) nomeTabela = tableAttr.Nome;
+
+            return nomeTabela;
+        }
+
+        public static void Delete<T>(T type)
+        {
+            var iType = (IType)type;
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
                 var sql = $"delete from pessoas where id = @id";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@id", pessoa.Id);
+                    command.Parameters.AddWithValue("@id", iType.Id);
 
                     command.ExecuteNonQuery();
                 }

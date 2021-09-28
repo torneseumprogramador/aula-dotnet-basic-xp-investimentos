@@ -7,32 +7,7 @@ namespace console_treinamento
     {
         public string EnderecoDoCliente { get; set; }
 
-        public Cliente()
-        {
-            SetDocumento(this.CPF);
-        }
-
-        [NomeDaColunaNoBanco(Nome = "documento", NaoMapeada = false, IsPk = false, Tamanho = 100, TipoNoBanco= "Varchar" )]
-        public override string Documento { get; set; }
-
-       [NaoMapeada]
-       public string CPF
-       {
-            get
-            {
-                return this.Documento;
-            }
-            set
-            {
-                if (!validaCPF(value)) throw new Exception("CPF inválido");
-                this.Documento = value;
-            }
-       }
-
-        public override void SetDocumento(string cpf)
-        {
-            this.Documento = cpf;
-        }
+        public string CPF { get; set; }
 
         private bool validaCPF(string vrCPF)
         {

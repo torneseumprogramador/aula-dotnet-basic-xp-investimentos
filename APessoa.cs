@@ -2,14 +2,10 @@
 
 namespace console_treinamento
 {
-    public abstract class APessoa : IPessoa
+    public abstract class APessoa : IType
     {
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Telefone { get; set; }
-
-        public virtual string Documento { get; set; }
-
-        public abstract void SetDocumento(string doc);
     }
 }
