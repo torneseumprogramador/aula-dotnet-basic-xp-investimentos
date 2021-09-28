@@ -4,6 +4,7 @@ namespace console_treinamento
 {
     public class Fornecedor: APessoa
     {
+        [NaoMapeada]
         public string CNPJ
         {
             get

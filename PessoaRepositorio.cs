@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using MySql.Data.MySqlClient;
 
 namespace console_treinamento
@@ -20,7 +21,11 @@ namespace console_treinamento
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                var sql = $"select * from <TIPO QUE VEM DO OBJETO> limit 1000";
+                var nomeTabela = $"{this.type.Name.ToLower()}s";
+                var tableAttr = this.type.GetCustomAttribute<TabelaAttribute>();
+                if (tableAttr != null) nomeTabela = tableAttr.Nome;
+
+                var sql = $"select * from {nomeTabela} limit 1000";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@tipo", type.Name);
@@ -29,17 +34,20 @@ namespace console_treinamento
                     while (dr.Read())
                     {
                         var pes = (IPessoa)Activator.CreateInstance(type);
-                        pes.Id = Convert.ToInt32(dr["id"]);
                         
-                        //var dado = pes.GetType().GetProperty("EnderecoDoCliente").GetValue(pes);
                         foreach (var pi in pes.GetType().GetProperties())
                         {
-                            if(dr[pi.Name] != DBNull.Value)
-                                pi.SetValue(pes, dr[pi.Name]);
+                            var notPersistedField = pi.GetCustomAttribute<NaoMapeadaAttribute>();
+                            if (notPersistedField != null) continue;
 
-                            Console.WriteLine(pi.Name);
+                            var nomeColuna = pi.Name;
+
+                            var nomeColunaAtributo = pi.GetCustomAttribute<NomeDaColunaNoBancoAttribute>();
+                            if (nomeColunaAtributo != null) nomeColuna = nomeColunaAtributo.Nome;
+
+                            if (dr[nomeColuna] != DBNull.Value)
+                                pi.SetValue(pes, dr[nomeColuna]);
                         }
-                        //pes.EnderecoDoCliente = dr["EnderecoDoCliente"].ToString();
 
                         pessoas.Add(pes);
                     }

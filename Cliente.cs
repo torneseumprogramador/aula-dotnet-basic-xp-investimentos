@@ -2,6 +2,7 @@
 
 namespace console_treinamento
 {
+    [Tabela("clientes")]
     public class Cliente : APessoa, IFisica
     {
         public string EnderecoDoCliente { get; set; }
@@ -11,6 +12,10 @@ namespace console_treinamento
             SetDocumento(this.CPF);
         }
 
+        [NomeDaColunaNoBanco(Nome = "documento", NaoMapeada = false, IsPk = false, Tamanho = 100, TipoNoBanco= "Varchar" )]
+        public override string Documento { get; set; }
+
+       [NaoMapeada]
        public string CPF
        {
             get
