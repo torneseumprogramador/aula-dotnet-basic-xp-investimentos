@@ -20,7 +20,7 @@ namespace console_treinamento
             using (MySqlConnection connection = new MySqlConnection(Program.SqlCNN))
             {
                 connection.Open();
-                var sql = $"select * from pessoas where tipo = @tipo limit 1000";
+                var sql = $"select * from <TIPO QUE VEM DO OBJETO> limit 1000";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@tipo", type.Name);
@@ -30,12 +30,16 @@ namespace console_treinamento
                     {
                         var pes = (IPessoa)Activator.CreateInstance(type);
                         pes.Id = Convert.ToInt32(dr["id"]);
-                        pes.Nome = dr["nome"].ToString();
-                        pes.Telefone = dr["telefone"].ToString();
-                        pes.Documento = dr["documento"].ToString();
+                        
+                        //var dado = pes.GetType().GetProperty("EnderecoDoCliente").GetValue(pes);
+                        foreach (var pi in pes.GetType().GetProperties())
+                        {
+                            if(dr[pi.Name] != DBNull.Value)
+                                pi.SetValue(pes, dr[pi.Name]);
 
-                        // Reflaction para amanhã
-                        //EnderecoDoCliente
+                            Console.WriteLine(pi.Name);
+                        }
+                        //pes.EnderecoDoCliente = dr["EnderecoDoCliente"].ToString();
 
                         pessoas.Add(pes);
                     }
